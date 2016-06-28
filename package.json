@@ -1,0 +1,14 @@
+{
+  "name": "ff-jsondb",
+  "version": "0.0.0",
+  "engines": { "node": ">=4.0.0" },
+  "author": "Trevor Norris <trev.norris@gmail.com>",
+  "description": "an unoptimized flat file json database",
+  "homepage": "https://github.com/trevnorris/ff-jsondb",
+  "repository": "trevnorris/ff-jsondb",
+  "dependencies": {
+    "mkdirp": "latest"
+  },
+  "main": "main.js",
+  "license": "MIT"
+}

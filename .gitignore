@@ -1,0 +1,29 @@
+# dependency directory
+node_modules
+
+# optional npm cache directory
+.npm
+
+# logs and performance
+core
+vgcore.*
+v8*.log
+perf.data
+perf.data.old
+npm-debug.log*
+logs
+*.log
+
+# runtime data
+pids
+*.pid
+*.seed
+
+# os generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
