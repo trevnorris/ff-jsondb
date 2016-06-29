@@ -1,6 +1,6 @@
 {
   "name": "ff-jsondb",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engines": { "node": ">=4.0.0" },
   "author": "Trevor Norris <trev.norris@gmail.com>",
   "description": "an unoptimized flat file json database",
