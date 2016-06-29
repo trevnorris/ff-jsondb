@@ -5,11 +5,6 @@ was created to allow reading/writing to the database without use of this API,
 and to be minimal and straight forward. The entire API is synchronous, and I
 don't feel bad about that one bit.
 
-**NOTE:** Files are read/written using `Buffer`'s `'latin1'`/`'binary'`
-encoding to prevent accidental data loss that can occur when converting a
-string to `'utf8'`. Please keep this in mind if intending to open/edit the
-files manually.
-
 
 ### API
 
