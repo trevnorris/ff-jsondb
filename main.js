@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
-const print = process._rawDebug;
+const debuglog = require('util').debuglog('jsondb');
 
 module.exports = jsondb;
 
@@ -62,7 +62,7 @@ JSONDB.prototype.set = function set(key, value) {
   try {
     fs.writeFileSync(resolvePath(this.path + key + '.json'), value);
   } catch (e) {
-    print(e.message);
+    debuglog(e.message);
     return false;
   }
 };
@@ -75,7 +75,7 @@ JSONDB.prototype.del = function del(key) {
     fs.unlinkSync(resolvePath(this.path + key + '.json'));
     return true;
   } catch (e) {
-    print(e.message);
+    debuglog(e.message);
     return false;
   }
 };
@@ -112,15 +112,21 @@ function getSingleEntry(tpath, key) {
   try {
     return fs.readFileSync(resolvePath(tpath + key + '.json'));
   } catch (e) {
-    print(e.message);
+    debuglog(e.message);
     return null;
   }
 }
 
 
 function getMultiEntry(tpath, key, regex) {
-  const ls = fs.readdirSync(resolvePath(tpath + key));
   const files = {};
+  let ls;
+  try {
+    ls = fs.readdirSync(resolvePath(tpath + key));
+  } catch (e) {
+    debuglog(e.message);
+    return files;
+  }
   for (let i of ls) {
     if (regex.test(path.basename(i, '.json')) &&
         fs.statSync(tpath + key + '/' + i).isFile()) {
