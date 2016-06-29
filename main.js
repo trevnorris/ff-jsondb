@@ -25,12 +25,12 @@ JSONDB.prototype.get = function get(key, regex_name) {
     if (regex_name !== undefined)
       throw new TypeError('regex_name must be a RegExp');
     const ret = getSingleEntry(this.path, key);
-    return ret === null ? ret : JSON.parse(ret.toString('binary'));
+    return ret === null ? ret : JSON.parse(ret.toString());
   }
 
   const ret_obj = getMultiEntry(this.path, key, regex_name);
   for (let i in ret_obj) {
-    ret_obj[i] = JSON.parse(ret_obj[i].toString('binary'));
+    ret_obj[i] = JSON.parse(ret_obj[i].toString());
   }
   return ret_obj;
 };
@@ -54,9 +54,9 @@ JSONDB.prototype.set = function set(key, value) {
 
   if (!Buffer.isBuffer(value)) {
     if (typeof value !== 'string')
-      value = Buffer(JSON.stringify(value), 'binary');
+      value = Buffer(JSON.stringify(value));
     else
-      value = Buffer(value, 'binary');
+      value = Buffer(value);
   }
 
   try {
