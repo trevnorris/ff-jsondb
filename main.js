@@ -81,6 +81,19 @@ JSONDB.prototype.del = function del(key) {
 };
 
 
+JSONDB.prototype.exists = function exists(key) {
+  checkKey(key);
+
+  try {
+    fs.accessSync(resolvePath(this.path + key + '.json'));
+    return true;
+  } catch (e) {
+    debuglog(e.message);
+    return false;
+  }
+};
+
+
 function resolvePath(pp) {
   if (typeof pp !== 'string') {
     throw new TypeError('path was not supplied');

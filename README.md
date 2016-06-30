@@ -92,3 +92,11 @@ correctly.
 
 Delete entry at location `key`. `key` is always a file, not a directory. So no
 deleting many records at once. For now at least.
+
+
+#### `db.exists(key)`
+
+* `key` {String}
+* Returns {Boolean}
+
+Return whether the key entry exists in the database.
