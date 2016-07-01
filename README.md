@@ -100,3 +100,21 @@ deleting many records at once. For now at least.
 * Returns {Boolean}
 
 Return whether the key entry exists in the database.
+
+
+#### `db.listEntries(key[, regex])`
+
+* `key` {String}
+* `regex` {RegExp} Optional
+* Returns {Array} of matches
+
+Returns an array of matches at `key` of any JSON files.
+
+
+#### `db.listDirs(key[, regex])`
+
+* `key` {String}
+* `regex` {RegExp} Optional
+* Returns {Array} of matches
+
+Returns an array of matches at `key` of any directories.
