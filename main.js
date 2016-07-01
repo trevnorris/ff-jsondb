@@ -18,6 +18,10 @@ function JSONDB(db_path) {
 }
 
 
+// TODO(trevnorris): Add a .recGet() that uses the regexp to search all files
+// in all matching folders and subfolders.
+// TODO(trevnorris): Add a callback option that returns entries in groups,
+// since there may be too many entries to process all at once.
 JSONDB.prototype.get = function get(key, regex_name) {
   checkKey(key);
 
@@ -94,6 +98,37 @@ JSONDB.prototype.exists = function exists(key) {
 };
 
 
+JSONDB.prototype.listEntries = function listEntries(key, regex) {
+  return listAll(key, regex, this.path, 'isFile');
+};
+
+
+JSONDB.prototype.listDirs = function listDirs(key, regex) {
+  return listAll(key, regex, this.path, 'isDirectory');
+};
+
+
+function listAll(key, regex, tpath, fnstr) {
+  const entries = [];
+  const rpath = resolvePath(tpath + key);
+  let ls;
+  try {
+    ls = fs.readdirSync(rpath);
+  } catch (e) {
+    debuglog(e.message);
+    return null;
+  }
+  for (let i of ls) {
+    if (fs.statSync(rpath + '/' + i)[fnstr]()) {
+      const stripped = fnstr === 'isFile' ? stripExt(i) : i;
+      if ((regex && regex.test(stripped)) || !regex)
+        entries.push(stripped);
+    }
+  }
+  return entries;
+}
+
+
 function resolvePath(pp) {
   if (typeof pp !== 'string') {
     throw new TypeError('path was not supplied');
@@ -133,19 +168,24 @@ function getSingleEntry(tpath, key) {
 
 function getMultiEntry(tpath, key, regex) {
   const files = {};
+  const rpath = resolvePath(tpath + key);
   let ls;
   try {
-    ls = fs.readdirSync(resolvePath(tpath + key));
+    ls = fs.readdirSync(rpath);
   } catch (e) {
     debuglog(e.message);
     return files;
   }
   for (let i of ls) {
-    if (regex.test(path.basename(i, '.json')) &&
-        fs.statSync(tpath + key + '/' + i).isFile()) {
-      files[path.basename(i, '.json')] =
-          fs.readFileSync(tpath + key + '/' + i);
+    if (regex.test(stripExt(i)) &&
+        fs.statSync(rpath + '/' + i).isFile()) {
+      files[stripExt(i)] = fs.readFileSync(tpath + key + '/' + i);
     }
   }
   return files;
+}
+
+
+function stripExt(str) {
+  return str.substr(0, str.length - 5);
 }
