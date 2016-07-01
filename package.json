@@ -6,6 +6,9 @@
   "description": "an unoptimized flat file json database",
   "homepage": "https://github.com/trevnorris/ff-jsondb",
   "repository": "trevnorris/ff-jsondb",
+  "bugs": {
+    "url": "https://github.com/trevnorris/ff-jsondb/issues"
+  },
   "dependencies": {
     "mkdirp": "latest"
   },
