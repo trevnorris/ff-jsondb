@@ -38,7 +38,7 @@ to store data in the same path as the file. For example:
 
 ```js
 db.set('/foo/bar', { foo: 'bar' });
-db.set('/foo/bar/baz', { bar: 'baz });
+db.set('/foo/bar/baz', { bar: 'baz' });
 ```
 
 If `regex_name` is passed then a directory lookup is done for all files
