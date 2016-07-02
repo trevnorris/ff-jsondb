@@ -38,7 +38,7 @@ to store data in the same path as the file. For example:
 
 ```js
 db.set('/foo/bar', { foo: 'bar' });
-db.set('/foo/bar/baz, { bar: 'baz });
+db.set('/foo/bar/baz', { bar: 'baz });
 ```
 
 If `regex_name` is passed then a directory lookup is done for all files
@@ -64,28 +64,6 @@ the data it returns a `Buffer` or an `Object` of `Buffer`s.
 Replace contents at `key` with `value`. Sorry, it's all or nothing here. Either
 a `Buffer`, `String` or `Object` can be passed. `Object`s will be passed to
 `JSON.stringify()`.
-
-All strings will be written to disk using the `'latin1'`/`'binary'` encoding
-to prevent any data loss. Here's an example of the difference between writing
-`'latin1'` and `'utf8'`:
-
-```js
-const str = 'h\u00e8ll\u00f3 w\u00f4rl\u00de';
-// str === 'hèlló wôrlÞ'
-fs.writeFileSync(path, str);  // written as 'utf8'
-fs.readFileSync(path);
-// byte sequence of file:
-//   68 c3 a8 6c 6c c3 b3 20 77 c3 b4 72 6c c3 9e
-
-fs.writeFileSync(path, str, { encoding: 'binary' });
-fs.readFileSync(path);
-// byte sequence of file:
-//   68 e8 6c 6c f3 20 77 f4 72 6c de
-```
-
-So if you are going to edit these files manually remember to use the correct
-character encoding. Otherwise `ff-jsondb` won't be able to read the file in
-correctly.
 
 
 #### `db.del(key)`
