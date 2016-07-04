@@ -96,3 +96,12 @@ Returns an array of matches at `key` of any JSON files.
 * Returns {Array} of matches
 
 Returns an array of matches at `key` of any directories.
+
+
+#### `db.countEntries(key[, regex])`
+
+* `key` {String}
+* `regex` {RegExp} Optional
+* Returns {Number} of matching results
+
+Get the number of entries matching `key` and `regex`.

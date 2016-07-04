@@ -108,6 +108,31 @@ JSONDB.prototype.listDirs = function listDirs(key, regex) {
 };
 
 
+JSONDB.prototype.countEntries = function countEntries(key, regex) {
+  const rpath = resolvePath(this.path + key);
+  let counter = 0;
+  let ls;
+  try {
+    ls = fs.readdirSync(rpath);
+  } catch (e) {
+    debuglog(e.message);
+    return -1;
+  }
+  for (let file of ls) {
+    if (!fs.statSync(rpath + '/' + file).isFile())
+      continue;
+    file = file.substr(0, file.length - 5);
+    if (regex) {
+      if (regex.test(file))
+        counter++;
+    } else {
+      counter++;
+    }
+  }
+  return counter;
+};
+
+
 function listAll(key, regex, tpath, fnstr) {
   const entries = [];
   const rpath = resolvePath(tpath + key);
