@@ -59,7 +59,8 @@ db.get('/path', /pattern/, function(id, data) {
 ```
 
 Remember that this operation is not asynchronous. If `callback` is passed then
-`db.get()` will return `undefined`.
+`db.get()` will return `undefined`. If `callback` returns `true` then the
+operation will stop and no more entries will be passed to the user.
 
 
 #### `db.getRaw(key[, regex_name[, callback]])`

@@ -27,7 +27,7 @@ JSONDB.prototype.get = function get(key, regex_name, callback) {
     if (regex_name !== undefined)
       throw new TypeError('regex_name must be a RegExp');
     const ret = getSingleEntry(this.path, key);
-    return ret === null ? ret : JSON.parse(ret.toString());
+    return ret === null ? ret : JSON.parse(ret);
   }
 
   if (typeof callback === 'function' && !(regex_name instanceof RegExp)) {
@@ -45,7 +45,11 @@ JSONDB.prototype.get = function get(key, regex_name, callback) {
   const list = listAll(key, regex_name, this.path, 'isFile');
   for (let i of list) {
     const data = getSingleEntry(this.path, key + '/' + i);
-    callback.call(this, i, data === null ? data : JSON.parse(data.toString()));
+    const ret_check =
+        callback.call(this, i, data === null ? data : JSON.parse(data));
+    // If the user returned "true" then it means operations should stop.
+    if (ret_check === true)
+      return;
   }
 };
 
@@ -69,7 +73,11 @@ JSONDB.prototype.getRaw = function getRaw(key, regex_name, callback) {
 
   const list = listAll(key, regex_name, this.path, 'isFile');
   for (let i of list) {
-    callback.call(this, i, getSingleEntry(this.path, key + '/' + i));
+    const ret_check =
+        callback.call(this, i, getSingleEntry(this.path, key + '/' + i));
+    // If the user returned "true" then it means operations should stop.
+    if (ret_check === true)
+      return;
   }
 };
 
