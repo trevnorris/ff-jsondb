@@ -19,10 +19,11 @@ database. A relative `db_path` is resolved against the script's `process.cwd()`
 (i.e. the path where the script was executed).
 
 
-#### `db.get(key[, regex_name])`
+#### `db.get(key[, regex_name[, callback]])`
 
 * `key` {String}
 * `regex_name` {RegExp}
+* `callback` {Function}
 * Returns {Object}
 
 Retrieve the JSON file(s) at given `key`. The `key` is actually a folder path
@@ -45,11 +46,27 @@ If `regex_name` is passed then a directory lookup is done for all files
 matching the passed `RegExp`. The return value is an `Object` whose keys are
 the names of the matching entries.
 
+If `callback` is passed then each entry that matches `regex_name` will be
+passed to `callback`. This is to help prevent cases where there are too many
+matches to be contained in one object. Here's an example:
 
-#### `db.getRaw(key[, regex_name])`
+```js
+db.get('/path', /pattern/, function(id, data) {
+  // The "this" of the callback is always the "db".
+  // "id" is the name of the entry.
+  // "data" is the json object in the entry.
+});
+```
+
+Remember that this operation is not asynchronous. If `callback` is passed then
+`db.get()` will return `undefined`.
+
+
+#### `db.getRaw(key[, regex_name[, callback]])`
 
 * `key` {String}
 * `regex_name` {RegExp}
+* `callback` {Function}
 * Returns {Buffer} or {Object}
 
 Same as `db.get()` except instead of automatically running `JSON.parse()` on

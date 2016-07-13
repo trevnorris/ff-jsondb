@@ -20,9 +20,7 @@ function JSONDB(db_path) {
 
 // TODO(trevnorris): Add a .recGet() that uses the regexp to search all files
 // in all matching folders and subfolders.
-// TODO(trevnorris): Add a callback option that returns entries in groups,
-// since there may be too many entries to process all at once.
-JSONDB.prototype.get = function get(key, regex_name) {
+JSONDB.prototype.get = function get(key, regex_name, callback) {
   checkKey(key);
 
   if (!(regex_name instanceof RegExp)) {
@@ -32,15 +30,27 @@ JSONDB.prototype.get = function get(key, regex_name) {
     return ret === null ? ret : JSON.parse(ret.toString());
   }
 
-  const ret_obj = getMultiEntry(this.path, key, regex_name);
-  for (let i in ret_obj) {
-    ret_obj[i] = JSON.parse(ret_obj[i].toString());
+  if (typeof callback === 'function' && !(regex_name instanceof RegExp)) {
+    throw new TypeError('callback requires a valid regex');
   }
-  return ret_obj;
+
+  if (typeof callback !== 'function') {
+    const ret_obj = getMultiEntry(this.path, key, regex_name);
+    for (let i in ret_obj) {
+      ret_obj[i] = JSON.parse(ret_obj[i].toString());
+    }
+    return ret_obj;
+  }
+
+  const list = listAll(key, regex_name, this.path, 'isFile');
+  for (let i of list) {
+    const data = getSingleEntry(this.path, key + '/' + i);
+    callback.call(this, i, data === null ? data : JSON.parse(data.toString()));
+  }
 };
 
 
-JSONDB.prototype.getRaw = function getRaw(key, regex_name) {
+JSONDB.prototype.getRaw = function getRaw(key, regex_name, callback) {
   checkKey(key);
 
   if (!(regex_name instanceof RegExp)) {
@@ -49,7 +59,18 @@ JSONDB.prototype.getRaw = function getRaw(key, regex_name) {
     return getSingleEntry(this.path, key);
   }
 
-  return getMultiEntry(this.path, key, regex_name);
+  if (typeof callback === 'function' && !(regex_name instanceof RegExp)) {
+    throw new TypeError('callback requires a valid regex');
+  }
+
+  if (typeof callback !== 'function') {
+    return getMultiEntry(this.path, key, regex_name);
+  }
+
+  const list = listAll(key, regex_name, this.path, 'isFile');
+  for (let i of list) {
+    callback.call(this, i, getSingleEntry(this.path, key + '/' + i));
+  }
 };
 
 
