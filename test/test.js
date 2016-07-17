@@ -5,25 +5,24 @@ const print = process._rawDebug;
 
 const db = jsondb('../test-json-db-store');
 
+//db.index.set('get_a_f', /^\/genRand\/[^/]*$/, '/indexes/0_9', function(key, json) {
+  //var ret = { 'a_f': [] };
+  //for (var i in json) {
+    //if (/[a-f]/.test(i.charAt(0))) {
+      //ret['a_f'].push([i, key]);
+    //}
+  //}
+  //return ret;
+//});
 
-db.index.set('get_0_9', /^\/genRand\/[^/]*$/, '/indexes/0_9', function(key, json) {
-  var ret = { '0_9': [] };
-  for (var i in json) {
-    if (/[0-9]/.test(i.charAt(0))) {
-      ret['0_9'].push([i, key]);
-    }
-  }
-  return ret;
-});
+//for (var i = 0; i < 100; i++) {
+  //db.set('/genRand/' + Math.random().toString(36).substr(2),
+         //{ [Math.random().toString(16).substr(2)]: i });
+//}
 
-
-//db.set('/genRand/foop', { 42: 'foo' });
-
-
-for (var i = 0; i < 100; i++) {
-  db.set('/genRand/' + Math.random().toString(36).substr(2),
-         { [Math.random().toString(16).substr(2)]: i });
-}
+//db.del('/indexes/0_9');
+//let err = db.rm_rf('/genRand');
+//if (err) console.log(err);
 
 
 
