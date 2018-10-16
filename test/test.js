@@ -5,6 +5,8 @@ const print = process._rawDebug;
 
 const db = jsondb('../test-json-db-store');
 
+db.index.reindex('/genRand');
+
 //db.index.set('get_a_f', /^\/genRand\/[^/]*$/, '/indexes/0_9', function(key, json) {
   //var ret = { 'a_f': [] };
   //for (var i in json) {
