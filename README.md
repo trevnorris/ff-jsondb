@@ -63,6 +63,24 @@ Remember that this operation is not asynchronous. If `callback` is passed then
 operation will stop and no more entries will be passed to the user.
 
 
+#### `db.recGet(key, regex)`
+
+* `key` {String}: The folder path from which to start the search. This path is
+  relative to the database's root directory.
+* `regex` {RegExp}: A regular expression used to match file names. Only files
+  that match this regex will be included in the results.
+* Returns {Array}: An array of file paths that match the given regex pattern.
+  If no files match, an empty array is returned.
+
+The `db.recGet()` method allows you to perform a recursive search for JSON
+files within a specified directory and its subdirectories. It uses the provided
+regular expression to filter the files that are returned.
+
+This method is particularly useful when you need to find files that match a
+certain naming pattern across multiple levels of directories without having to
+manually traverse each folder.
+
+
 #### `db.getRaw(key[, regex_name[, callback]])`
 
 * `key` {String}
