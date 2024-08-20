@@ -1,61 +1,94 @@
 'use strict';
 
 const jsondb = require('../main');
-const print = process._rawDebug;
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
 
-const db = jsondb('../test-json-db-store');
+const dbPath = path.join(__dirname, '../test-json-db-store');
+const db = jsondb(dbPath);
 
-db.index.reindex('/genRand');
-
-//db.index.set('get_a_f', /^\/genRand\/[^/]*$/, '/indexes/0_9', function(key, json) {
-  //var ret = { 'a_f': [] };
-  //for (var i in json) {
-    //if (/[a-f]/.test(i.charAt(0))) {
-      //ret['a_f'].push([i, key]);
-    //}
-  //}
-  //return ret;
-//});
-
-//for (var i = 0; i < 100; i++) {
-  //db.set('/genRand/' + Math.random().toString(36).substr(2),
-         //{ [Math.random().toString(16).substr(2)]: i });
-//}
-
-//db.del('/indexes/0_9');
-//let err = db.rm_rf('/genRand');
-//if (err) console.log(err);
-
-
-
-//db.index.set('test1', /^\/foo.*$/, '/indexes/foo', function (json, index) {
-  //console.log(index);
-  //index.foo = 'bar';
-//});
-
-//db.set('/foo/bar', { foo: 'baz' });
-//print(db.get('/foo/bar'));
-//db.del('/foo/bar');
-//print(db.get('/foo/bar'));
-/* */
-
-
-/*
-for (var i = 0; i < 100; i++) {
-  db.set('/foo/' + Math.random().toString(32).substr(2),
-         { val: Math.random() });
+// Ensure the test database directory exists
+if (!fs.existsSync(dbPath)) {
+  fs.mkdirSync(dbPath);
 }
-/* */
 
-/*
-db.listEntries('/foo', /.*$/).forEach(name => {
-  db.del('/foo' + '/' + name);
-});
-/* */
+// Cleanup function to remove the test database after tests
+function cleanup() {
+  fs.rmSync(dbPath, { recursive: true, force: true });
+}
 
-//const files = db.get('/foo', /^s.*$/);
-//print(files);
+// Run tests
+function runTests() {
+  try {
+    // Test for set and get
+    db.set('/foo/bar', { foo: 'baz' });
+    const result = db.get('/foo/bar');
+    assert.deepStrictEqual(result,
+                           { foo: 'baz' },
+                           'Expected value to be { foo: "baz" }');
 
-//db.get('/foo', /^s.*$/, (name, data) => {
-  //print(name, data);
-//});
+    // Test for getting a non-existent key
+    const nonExistentResult = db.get('/nonexistent/key');
+    assert.strictEqual(nonExistentResult,
+                       null,
+                       'Expected result to be null for non-existent key');
+
+    // Test for delete
+    const deleteResult = db.del('/foo/bar');
+    assert.strictEqual(deleteResult,
+                       true,
+                       'Expected delete to return true');
+    const afterDeleteResult = db.get('/foo/bar');
+    assert.strictEqual(afterDeleteResult,
+                       null,
+                       'Expected result to be null after deletion');
+
+    // Test for deleting a non-existent key
+    const deleteNonExistentResult = db.del('/nonexistent/key');
+    assert.strictEqual(deleteNonExistentResult,
+                       false,
+                       'Expected delete to return false for non-existent key');
+
+    // Test for exists
+    db.set('/foo/bar', { foo: 'baz' });
+    const existsResult = db.exists('/foo/bar');
+    assert.strictEqual(existsResult,
+                       true,
+                       'Expected exists to return true for existing key');
+
+    // Test for non-existent key in exists
+    const existsNonExistentResult = db.exists('/nonexistent/key');
+    assert.strictEqual(existsNonExistentResult,
+                       false,
+                       'Expected exists to return false for non-existent key');
+
+    // Test for listEntries
+    db.set('/foo/entry1', { data: 'test1' });
+    db.set('/foo/entry2', { data: 'test2' });
+    db.set('/foo/other', { data: 'test3' });
+    const entries = db.listEntries('/foo', /^entry/);
+    assert.deepStrictEqual(entries,
+                           ['entry1', 'entry2'],
+                           'Expected entries to match');
+
+    // Test for counting entries
+    const count = db.countEntries('/foo', /^entry/);
+    assert.strictEqual(count, 2, 'Expected count to be 2');
+
+    // Test for counting non-existent entries
+    const countNonExistent = db.countEntries('/foo', /^nonexistent/);
+    assert.strictEqual(countNonExistent,
+                       0,
+                       'Expected count to be 0 for non-existent entries');
+
+    console.log('All tests passed successfully!');
+  } catch (error) {
+    console.error('Test failed:', error.message);
+  } finally {
+    cleanup();
+  }
+}
+
+// Execute the tests
+runTests();
